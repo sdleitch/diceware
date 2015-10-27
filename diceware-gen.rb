@@ -1,5 +1,6 @@
 # Simple generator to make Diceware passwords
 # See http://world.std.com/~reinhold/diceware.html for explanation on Diceware
+require 'securerandom'
 
 # Create empty hash to store vales and words later
 words = Hash.new
@@ -20,7 +21,7 @@ numbers = []
 # Check if that's a possible roll (if it's in the hash)
 # If it is, add it to the numbers array. Continue until array has five.
 until numbers.length == 5  do
-  num = rand(11111..66666)
+  num = SecureRandom.random_number(66666)
   if words[num] != nil
     numbers << num
   end
