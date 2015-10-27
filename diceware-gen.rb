@@ -18,7 +18,7 @@ end
 numbers = []
 # Generate random number between 11,111 and 66,666
 # Check if that's a possible roll (if it's in the hash)
-# If it is, add it to the numbers array
+# If it is, add it to the numbers array. Continue until array has five.
 until numbers.length == 5  do
   num = rand(11111..66666)
   if words[num] != nil
