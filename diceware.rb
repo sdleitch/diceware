@@ -1,33 +1,42 @@
+#!/usr/bin/env ruby
 # Simple generator to make Diceware passwords
 # See http://world.std.com/~reinhold/diceware.html for explanation on Diceware
-require 'securerandom'
-password_length = ARGV[0] ? ARGV[0].to_i : 5
-wordlist = ARGV[1] ? ARGV[1] : "wordlist.txt"
 
-if password_length > 0
-  DELIMITERS = ["!","#","$","%","^","&","*","?","|"]
+require "optparse"
 
-  # Create a hash of numbers and words from supplied wordlist
-  words = File.open(wordlist, "r") do |f|
-    Hash[f.each_line.map { |l| l.chomp.split(" ", 2) }]
+class DicewarePassword
+  attr_reader :value
+  def initialize(options)
+    @value = self.generate(options)
   end
 
-  # Initialize and empty array and then populate it with
-  # sampled words from the word array
-  password_array = []
-  password_length.times do
-    password_array << words[words.keys.sample]
+  def generate(opts)
+    length = opts[:number] || 5
+    delimiter = opts[:no_delimiter] ? "" : (opts[:delimiter] || ["!","#","$","%","^","&","*","?","|"].sample)
+    wordlist = opts[:wordlist] || "wordlist.txt"
+    
+    # Read words from wordlist into Array
+    words = File.readlines(wordlist)
+    # Initialize an empty Array and then populate it with
+    # sampled words from the words Array
+    password_array = []
+    length.times { password_array << words.sample.chomp }
+    # Join those words with delimiter
+    password_array.join(delimiter)
   end
-
-  # Sample a delimiter
-  delimiter = DELIMITERS.sample
-
-  # Print out new password, joined and with sampled delimiter
-  puts "Your Diceware generated password is: \n" + password_array.join(delimiter)
-else
-  puts "This is a Diceware password generator for creating memorable but secure passwords."
-  puts "You can run it without any arguments to create a five-words based on the default \"wordlist.txt\" file"
-  puts "If you'd prefer a password of a different length or with a different wordlist the format is:"
-  puts "diceware [length(int)] [/path/to/wordlist/file.txt]\n\n"
-  puts "The world list should be formatted with each line containing a number, followed by a space. See default worldist as an example."
 end
+
+options ={}
+OptionParser.new do |opts|
+  opts.banner = "Usage: diceware.rb [options]"
+  opts.on("-n N", "--number N", Integer, "Number of words to use. Defaults to 5") { |n| options[:number] = n}
+  opts.on("-d CHAR", "--delimiter CHAR", String, "Character to use as delimiter") { |d| options[:delimiter] = d }
+  opts.on("--no-delimiter", "Don't include a delimiter character between words.") { |del| options[:no_delimiter] = true }
+  opts.on("-w FILE", "--wordlist FILE", String, "Wordlist to use.", "Should be formatted as a single word on each line.", "Defaults to wordlist.txt") do |w|
+    options[:wordlist] = w
+  end
+  opts.on("-h", "--help", "Show this help message") { puts opts; exit }
+end.parse!
+
+password = DicewarePassword.new(options) 
+puts password.value
