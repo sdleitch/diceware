@@ -15,13 +15,9 @@ class DicewarePassword
     delimiter = opts[:no_delimiter] ? "" : (opts[:delimiter] || ["!","#","$","%","^","&","*","?","|"].sample)
     wordlist = opts[:wordlist] || "wordlist.txt"
     
-    # Read words from wordlist into Array
     words = File.readlines(wordlist)
-    # Initialize an empty Array and then populate it with
-    # sampled words from the words Array
     password_array = []
     length.times { password_array << words.sample.chomp }
-    # Join those words with delimiter
     password_array.join(delimiter)
   end
 end
