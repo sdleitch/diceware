@@ -26,13 +26,18 @@ class DicewarePassword
   end
 end
 
-options ={}
+options = {}
 OptionParser.new do |opts|
-  opts.banner = "Usage: diceware.rb [options]"
-  opts.on("-n N", "--number N", Integer, "Number of words to use. Defaults to 5") { |n| options[:number] = n}
-  opts.on("-d CHAR", "--delimiter CHAR", String, "Character to use as delimiter") { |d| options[:delimiter] = d }
+  opts.banner = 
+"A simple generator to make diceware passwords.
+Usage: diceware.rb [options]
+Licensed under the terms of the MIT license.
+---"
+
+  opts.on("-n", "--number N", Integer, "Number of words to use. Defaults to 5") { |n| options[:number] = n}
+  opts.on("-d", "--delimiter CHAR", String, "Character to use as delimiter") { |d| options[:delimiter] = d }
   opts.on("--no-delimiter", "Don't include a delimiter character between words.") { |del| options[:no_delimiter] = true }
-  opts.on("-w FILE", "--wordlist FILE", String, "Wordlist to use.", "Should be formatted as a single word on each line.", "Defaults to wordlist.txt") do |w|
+  opts.on("-w", "--wordlist FILE", String, "Wordlist to use.", "Should be formatted as a single word on each line.", "Defaults to wordlist.txt") do |w|
     options[:wordlist] = w
   end
   opts.on("-h", "--help", "Show this help message") { puts opts; exit }
