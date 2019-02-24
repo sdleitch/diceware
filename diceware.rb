@@ -3,6 +3,7 @@
 # See http://world.std.com/~reinhold/diceware.html for explanation on Diceware
 
 require "optparse"
+require "securerandom"
 
 class DicewarePassword
   attr_reader :value
@@ -12,12 +13,12 @@ class DicewarePassword
 
   def generate(opts)
     length = opts[:number] || 5
-    delimiter = opts[:no_delimiter] ? "" : (opts[:delimiter] || ["!","#","$","%","^","&","*","?","|"].sample)
+    delimiter = opts[:no_delimiter] ? "" : (opts[:delimiter] || ["!","#","$","%","^","&","*","?","|"].sample(random: SecureRandom))
     wordlist = opts[:wordlist] || "wordlist.txt"
     wordlist_path = File.expand_path(wordlist, __dir__)
     words = File.readlines(wordlist_path)
     password_array = []
-    length.times { password_array << words.sample.chomp }
+    length.times { password_array << words.sample(random: SecureRandom).chomp }
     password_array.join(delimiter)
   end
 end
